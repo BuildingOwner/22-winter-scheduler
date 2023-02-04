@@ -55,7 +55,7 @@ exports.selectTodoByType = async function (userIdx, type) {
 
     try {
       // 쿼리
-      const insertTodoByTypeQuery = "select todoIdx, contents from Todos where userIdx = ? and type = ? and not (status = 'D');"
+      const insertTodoByTypeQuery = "select todoIdx, contents, status from Todos where userIdx = ? and type = ? and not (status = 'D');"
       const insertTodoByTypeParams = [userIdx, type];
 
       const [row] = await connection.query(insertTodoByTypeQuery, insertTodoByTypeParams);
