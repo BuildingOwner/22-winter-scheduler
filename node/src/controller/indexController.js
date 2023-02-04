@@ -1,7 +1,8 @@
 const indexDao = require("../dao/indexDao");
 
 exports.createTodo = async function (req, res) {
-  const { userIdx, contents, type } = req.body;
+  const { userIdx } = req.verifiedToken;
+  const { contents, type } = req.body;
 
   if (!userIdx || !contents || !type) {
     return res.send({
@@ -49,7 +50,7 @@ exports.createTodo = async function (req, res) {
 
 
 exports.readTodo = async function (req, res) {
-  const { userIdx } = req.params;
+  const { userIdx } = req.verifiedToken;
 
   const todos = {};
   const types = ["do", "decide", "delegate", "delete"];
@@ -77,7 +78,8 @@ exports.readTodo = async function (req, res) {
 
 // todo 수정
 exports.updateTodo = async function (req, res) {
-  let { userIdx, todoIdx, contents, status } = req.body;
+  const { userIdx } = req.verifiedToken;
+  let { todoIdx, contents, status } = req.body;
 
   if (!userIdx || !todoIdx) {
     return res.send({
@@ -124,7 +126,8 @@ exports.updateTodo = async function (req, res) {
 
 // todo 삭제
 exports.deleteTodo = async function (req, res) {
-  const { userIdx, todoIdx } = req.params;
+  const { userIdx } = req.verifiedToken;
+  const { todoIdx } = req.params;
 
   if (!userIdx || !todoIdx) {
     return res.send({
