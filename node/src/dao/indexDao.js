@@ -55,7 +55,7 @@ exports.selectTodoByType = async function (userIdx, type) {
 
     try {
       // 쿼리
-      const insertTodoByTypeQuery = "select todoIdx, contents from Todos where userIdx = ? and type = ? and status = 'A';"
+      const insertTodoByTypeQuery = "select todoIdx, contents from Todos where userIdx = ? and type = ? and not (status = 'D');"
       const insertTodoByTypeParams = [userIdx, type];
 
       const [row] = await connection.query(insertTodoByTypeQuery, insertTodoByTypeParams);
@@ -73,3 +73,81 @@ exports.selectTodoByType = async function (userIdx, type) {
     return false;
   }
 };
+
+exports.selectValideTodo = async function (userIdx, todoIdx) {
+  try {
+    // DB 연결 검사
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+      // 쿼리
+      const selectValideTodoQuery = "select * from Todos where userIdx = ? and todoIdx = ? and not (status = 'D');"
+      const selectValideTodoParams = [userIdx, todoIdx];
+
+      const [row] = await connection.query(selectValideTodoQuery, selectValideTodoParams);
+      return row;
+
+    } catch (err) {
+      console.error(`##### selectValideTodo Query error ##### \n ${err}`);
+      return false;
+
+    } finally {
+      connection.release();
+    }
+  } catch (err) {
+    console.error(` ##### selectValideTodo DB error ##### \n ${err}`);
+    return false;
+  }
+};
+
+exports.updateTodo = async function (userIdx, todoIdx, contents, status) {
+  try {
+    // DB 연결 검사
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+      // 쿼리
+      const updateTodoQuery = "update Todos set contents = ifnull(?, contents) , status = ifnull(?, status) where userIdx = ? and todoIdx = ?;"
+      const updateTodoParams = [contents, status, userIdx, todoIdx];
+
+      const [row] = await connection.query(updateTodoQuery, updateTodoParams);
+      return row;
+
+    } catch (err) {
+      console.error(`##### updateTodo Query error ##### \n ${err}`);
+      return false;
+
+    } finally {
+      connection.release();
+    }
+  } catch (err) {
+    console.error(` ##### updateTodo DB error ##### \n ${err}`);
+    return false;
+  }
+};
+
+exports.deleteTodo = async function (userIdx, todoIdx) {
+  try {
+    // DB 연결 검사
+    const connection = await pool.getConnection(async (conn) => conn);
+
+    try {
+      // 쿼리
+      const deleteTodoQuery = "update Todos set status = 'D' where userIdx = ? and todoIdx = ?;"
+      const deleteTodoParams = [userIdx, todoIdx];
+
+      const [row] = await connection.query(deleteTodoQuery, deleteTodoParams);
+      return row;
+
+    } catch (err) {
+      console.error(`##### deleteTodo Query error ##### \n ${err}`);
+      return false;
+
+    } finally {
+      connection.release();
+    }
+  } catch (err) {
+    console.error(` ##### deleteTodo DB error ##### \n ${err}`);
+    return false;
+  }
+}
