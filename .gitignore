@@ -1,1 +1,9 @@
-node/secret.js
+back/node_modules/
+
+back/secret.js
+
+back/pakage-lock.json
+
+서비스 완성/
+퍼블리싱/
+node/
